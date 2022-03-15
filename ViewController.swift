@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import UserNotifications
 
 class ViewController: UIViewController {
     @IBOutlet var table: UITableView!
@@ -16,7 +17,34 @@ class ViewController: UIViewController {
         table.delegate = self
         table.dataSource = self
     }
-
+    @IBAction func didTapedAddButton() {
+        
+    }
+    @IBAction func didTapedTestButton() {
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { success, error in
+            if success {
+                self.scheduledTest()
+            } else if let error = error {
+                print("error")
+            }
+        }
+    }
+    func scheduledTest() {
+        let content = UNMutableNotificationContent()
+        content.title = "Hello"
+        content.sound = .default
+        content.body = "boby"
+        let targedate = Date().addingTimeInterval(10)
+        let triger = UNCalendarNotificationTrigger(dateMatching: Calendar.current.dateComponents(
+            [.year, .month, .day, .hour, .minute, .second],
+            from: targedate), repeats: false)
+        let request = UNNotificationRequest(identifier: "id", content: content, trigger: triger)
+        UNUserNotificationCenter.current().add(request) { error in
+            if error != nil {
+                print("error")
+            }
+        }
+    }
 
 }
 extension ViewController: UITableViewDelegate {
